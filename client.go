@@ -69,12 +69,15 @@ func (i *IIO) bufferSizedReply(cmd string) (*[]uint8, error) {
 	}
 	log.Debugf("size is %d", size)
 
-	buffer := make([]byte, size)
-	if size < 0 {
-		return nil, fmt.Errorf("received negative size (error) from remote: %d", size)
-	} else if size == 0 {
+	var buffer []uint8
+
+	if size == 0 {
 		return &buffer, nil
+	} else if size < 0 {
+		return &buffer, fmt.Errorf("received negative size (error) from remote: %d", size)
 	}
+
+	buffer = make([]byte, size)
 
 	// We do not care/check the channel buffers however we want to ensure it is at least
 	// present to confirm that the entire response in in the format we expect
